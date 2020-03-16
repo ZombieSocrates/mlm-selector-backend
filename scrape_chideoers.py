@@ -45,7 +45,7 @@ def chideo_employees_inside_ideo():
     pprint(chideo_emps)
 
 
-def chideo_employees_from_html(skip_ids = IDS_TO_SKIP):
+def chideo_employees_from_html(skip_ids = IDS_TO_SKIP, verbose = False):
     chideo_employees = []
     with open("chideo_roster.html", "r") as f:
         contents = f.read()
@@ -59,9 +59,10 @@ def chideo_employees_from_html(skip_ids = IDS_TO_SKIP):
                 "name": get_chideoer_name(emp),
                 "email": get_chideoer_email(emp)
                 })
-    print(f"{len(chideo_employees)} records preserved out of {len(soup_emps)} found")
-    pprint(chideo_employees)
+    if verbose: 
+        print(f"{len(chideo_employees)} records preserved out of {len(soup_emps)} found")
+    return chideo_employees
 
 
 if __name__ == "__main__":
-    chideo_employees_from_html()
+    pass
