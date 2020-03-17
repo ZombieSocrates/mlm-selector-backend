@@ -18,15 +18,6 @@ class ChideoEmployee(Base):
     email = Column(String(50))
     host_slots = relationship("HostEngagement", back_populates = "host")
 
-
-    def serialize(self):
-        return {
-            "id": self.id, 
-            "name": self.name, 
-            "email": self.email
-        }
-
-
 class HostEngagement(Base):
     '''Folks who have already been selected to host MLM, along with the week 
     they hosted'''
@@ -35,11 +26,4 @@ class HostEngagement(Base):
     chideoer_id = Column(Integer, ForeignKey("chideoers.id"))
     week_of_hosting = Column(Date)
     host = relationship("ChideoEmployee", back_populates = "host_slots")
-
-    def serialize(self):
-        return {
-            "id": self.id, 
-            "chideoer_id": self.chideoer_id, 
-            "week_of_hosting": self.week_of_hosting
-        }
 
