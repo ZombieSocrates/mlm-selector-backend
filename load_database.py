@@ -6,7 +6,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 
 
-from models import ChideoEmployee, HostEngagements, get_engine
+from models import ChideoEmployee, HostEngagement, get_engine
 from scrape_chideoers import chideo_employees_from_html
 
 
@@ -56,13 +56,13 @@ def load_chideoer_records(db_engine):
 
 
 def load_host_records(db_engine, host_records = FOLKS_WHO_HOSTED):
-    if HostEngagements.__table__.exists(db_engine):
-        print(f"Dropping table {HostEngagements.__tablename__}...")
-        HostEngagements.__table__.drop(db_engine)
+    if HostEngagement.__table__.exists(db_engine):
+        print(f"Dropping table {HostEngagement.__tablename__}...")
+        HostEngagement.__table__.drop(db_engine)
 
-    if not HostEngagements.__table__.exists(db_engine):
-        print(f"Creating table {HostEngagements.__tablename__}...")
-        HostEngagements.__table__.create(db_engine)
+    if not HostEngagement.__table__.exists(db_engine):
+        print(f"Creating table {HostEngagement.__tablename__}...")
+        HostEngagement.__table__.create(db_engine)
 
     print("Loading Past MLM Hosts...")
     to_load = []
@@ -72,7 +72,7 @@ def load_host_records(db_engine, host_records = FOLKS_WHO_HOSTED):
             "chideoer_id": record.emp_id, 
             "week_of_hosting": record_week
             })
-    db_engine.execute(HostEngagements.__table__.insert(), to_load)
+    db_engine.execute(HostEngagement.__table__.insert(), to_load)
     print(f"Just inserted {len(to_load)} MLM Host Slots...")
     print("Done!")
 

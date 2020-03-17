@@ -16,7 +16,7 @@ class ChideoEmployee(Base):
     id = Column(Integer, primary_key = True)
     name = Column(String(50))
     email = Column(String(50))
-    host_slots = relationship("HostEngagements", back_populates = "host")
+    host_slots = relationship("HostEngagement", back_populates = "host")
 
 
     def serialize(self):
@@ -27,7 +27,7 @@ class ChideoEmployee(Base):
         }
 
 
-class HostEngagements(Base):
+class HostEngagement(Base):
     '''Folks who have already been selected to host MLM, along with the week 
     they hosted'''
     __tablename__ = "mlm_hosts"
