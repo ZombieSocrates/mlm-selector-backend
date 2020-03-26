@@ -13,6 +13,10 @@ class Config(object):
     SECRET_KEY = os.getenv("FLASK_SECRET_KEY")
     
 
+class TestConfig(Config):
+    DEVELOPMENT = False
+    SQLALCHEMY_DATABASE_URI = os.getenv("TEST_DB_URI")
+
 class DevelopmentConfig(Config):
     DEBUG = True
     DEVELOPMENT = True

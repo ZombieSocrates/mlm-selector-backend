@@ -4,39 +4,31 @@ import time
 from collections import namedtuple
 from datetime import datetime
 from dotenv import load_dotenv
+from sqlalchemy.schema import DropTable
+from sqlalchemy.ext.compiler import compiles
 
 
+from host_records import TEST_DB_HOSTS, DEV_DB_HOSTS
 from models import ChideoEmployee, HostEngagement, get_engine
 from scrape_chideoers import chideo_employees_from_html
 
-
-# Just FYI, I had to look this up after loading in the chideoer records based
-# on my Google Calendar history
-HostRow = namedtuple("HostRow", ["name","date", "emp_id"])
-FOLKS_WHO_HOSTED = [
-    HostRow(name = "Caralanay Cameron", date = "01/06/2020", emp_id = 3859),
-    HostRow(name = "Tom Antony", date = "01/13/2020", emp_id = 31104),
-    HostRow(name = "Jessica Randazza-Pade", date = "01/20/2020", emp_id = 31197),
-    HostRow(name = "Peter Winter", date = "01/27/2020", emp_id = 25647),
-    HostRow(name = "Ilan Brat", date = "02/03/2020", emp_id = 30934),
-    HostRow(name = "Nate Tower", date = "02/10/2020", emp_id = 27391),
-    HostRow(name = "Sam Becker", date = "02/17/2020", emp_id = 27962),
-    HostRow(name = "Jennifer Riel", date = "02/24/2020", emp_id = 31808),
-    HostRow(name = "Meredith Adams-Smart", date = "03/02/2020", emp_id = 3337),
-    HostRow(name = "Chris Kucharczyk", date = "03/09/2020", emp_id = 27963),
-    HostRow(name = "Jane Pak", date = "03/16/2020", emp_id = 31514),
-    HostRow(name = "Amie Ninh",date = "03/23/2020", emp_id = 31843),
-    HostRow(name = "Hitasha Bhatia", date = "03/30/2020", emp_id = 3480),
-    HostRow(name = "Steve Schwall", date = "04/06/2020", emp_id = 99),
-    HostRow(name = "Jason Chen", date = "04/13/2020", emp_id = 31006),
-    HostRow(name = "James Zhou", date = "04/20/2020", emp_id = 30892),
-]
+# https://stackoverflow.com/questions/38678336/sqlalchemy-how-to-implement-drop-table-cascade
+@compiles(DropTable, "postgresql")
+def _compile_drop_table(element, compiler, **kwargs):
+    return compiler.visit_drop_table(element) + " CASCADE"
 
 
 def get_database_uri():
     load_dotenv()
     if os.getenv("ENV_NAME") == "DEVELOPMENT":
         return os.getenv("DEV_DB_URI")
+    return os.getenv("TEST_DB_URI")
+
+
+def get_host_records():
+    if os.getenv("ENV_NAME") == "DEVELOPMENT":
+        return DEV_DB_HOSTS
+    return TEST_DB_HOSTS
 
 
 def load_chideoer_records(db_engine):
@@ -55,7 +47,7 @@ def load_chideoer_records(db_engine):
     print("Done!")
 
 
-def load_host_records(db_engine, host_records = FOLKS_WHO_HOSTED):
+def load_host_records(db_engine, host_records):
     if HostEngagement.__table__.exists(db_engine):
         print(f"Dropping table {HostEngagement.__tablename__}...")
         HostEngagement.__table__.drop(db_engine)
@@ -77,13 +69,13 @@ def load_host_records(db_engine, host_records = FOLKS_WHO_HOSTED):
     print("Done!")
 
 
-
 def populate_database():
     s = time.perf_counter()
     db_uri = get_database_uri()
+    past_hosts = get_host_records()
     db_engine = get_engine(db_uri, echo = False)
     load_chideoer_records(db_engine = db_engine)
-    load_host_records(db_engine = db_engine)
+    load_host_records(db_engine = db_engine, host_records = past_hosts)
     elapsed = time.perf_counter() - s
     print(f"{__file__} completed in {elapsed:0.2f} seconds")
 

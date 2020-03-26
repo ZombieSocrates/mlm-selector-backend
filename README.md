@@ -21,14 +21,16 @@ pip install -r requirements.txt
 
 ```
 ENV_NAME="DEVELOPMENT"
-DEV_DB_URI="postgresql://<BASH-USERNAME>@localhost:5432/<NAME-OF-LOCAL-DB>"
-FLASK_SECRET_KEY="<A-GNARLY-STRING>"
 APP_CONFIG = "config.DevelopmentConfig"
+FLASK_SECRET_KEY="<A-GNARLY-STRING>"
+
+DEV_DB_URI="postgresql://<BASH-USERNAME>@localhost:5432/<NAME-OF-LOCAL-DB-FOR-PUSHING-TO-HEROKU>"
+TEST_DB_URI="postgresql://rweijer@localhost:5432/<NAME-OF-LOCAL-DB-FOR-TESTING-BACKUP-PURPOSES>"
 ```
 
 - Then, create the actual postgres database on your machine and populate it like so:
 ```
-createdb <NAME-OF-LOCAL-DB>
+createdb <NAME(S)-OF-LOCAL-DB>
 python load_database.py
 ```
 
