@@ -49,8 +49,9 @@ heroku login
 git push heroku master
 ```
 
-**CAVEAT 1**: If anything you've done requires an update to the database, however, you'll need to run the following command before pushing: 
+**CAVEAT 1**: If anything you've done requires an update to the database, however, you'll need to run the following commands before pushing: 
 ```
+heroku pg:reset DATABASE_URL
 heroku pg:push postgresql://<BASH-USERNAME>@localhost:5432/<NAME-OF-LOCAL-DB> DATABASE_URL --app ml-eminem`
 ```
 
